@@ -5,11 +5,10 @@ namespace PokemonMVC.Models
     public class PokemonModel
     {
         public string Name { get; set; }
-        public string ImageUrl { get; set; }
-        public int Height { get; set; }
-        public int Weight { get; set; }
+        public string Url { get; set; }
     }
 
+    // Add this class
     public class PokemonApiResponse
     {
         public List<PokemonModel> Results { get; set; }

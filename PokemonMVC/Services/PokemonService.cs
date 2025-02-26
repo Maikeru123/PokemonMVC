@@ -10,68 +10,35 @@ namespace PokemonMVC.Services
     {
         private readonly string apiUrl = "https://pokeapi.co/api/v2/pokemon?limit=20";
 
+        // Fetch List of Pokémon
         public async Task<List<PokemonModel>> GetPokemonListAsync()
         {
             var client = new RestClient(apiUrl);
-            var request = new RestRequest("", Method.Get);
+            var request = new RestRequest();
             var response = await client.ExecuteAsync(request);
 
-            if (!response.IsSuccessful) return new List<PokemonModel>();
-
-            var apiResponse = JsonConvert.DeserializeObject<PokemonApiResponse>(response.Content);
-            var pokemonList = new List<PokemonModel>();
-
-            foreach (var item in apiResponse.Results)
+            if (response.IsSuccessful)
             {
-                var details = await GetPokemonDetailsAsync(item.Url);
-                pokemonList.Add(details);
+                var apiResponse = JsonConvert.DeserializeObject<PokemonApiResponse>(response.Content);
+                return apiResponse?.Results ?? new List<PokemonModel>();
             }
 
-            return pokemonList;
+            return new List<PokemonModel>();
         }
 
-        private async Task<PokemonModel> GetPokemonDetailsAsync(string pokemonUrl)
+        // Fetch Pokémon Details
+        public async Task<PokemonDetailsModel> GetPokemonDetailsAsync(string name)
         {
-            var client = new RestClient(pokemonUrl);
-            var request = new RestRequest("", Method.Get);
+            var client = new RestClient($"https://pokeapi.co/api/v2/pokemon/{name}");
+            var request = new RestRequest();
             var response = await client.ExecuteAsync(request);
 
-            if (!response.IsSuccessful) return new PokemonModel();
-
-            var data = JsonConvert.DeserializeObject<PokemonDetailsResponse>(response.Content);
-
-            return new PokemonModel
+            if (response.IsSuccessful)
             {
-                Name = data.Name,
-                ImageUrl = data.Sprites.FrontDefault,
-                Height = data.Height,
-                Weight = data.Weight
-            };
+                return JsonConvert.DeserializeObject<PokemonDetailsModel>(response.Content);
+            }
+
+            return null;
         }
-    }
-
-    public class PokemonApiResponse
-    {
-        public List<PokemonResult> Results { get; set; }
-    }
-
-    public class PokemonResult
-    {
-        public string Name { get; set; }
-        public string Url { get; set; }
-    }
-
-    public class PokemonDetailsResponse
-    {
-        public string Name { get; set; }
-        public int Height { get; set; }
-        public int Weight { get; set; }
-        public PokemonSprites Sprites { get; set; }
-    }
-
-    public class PokemonSprites
-    {
-        [JsonProperty("front_default")]
-        public string FrontDefault { get; set; }
     }
 }

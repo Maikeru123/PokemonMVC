@@ -1,25 +1,24 @@
-﻿@model List<PokemonMVC.Models.PokemonModel>
+﻿@{
+    Layout = null;
+}
+
+
+@model List<PokemonMVC.Models.PokemonModel>
 
 <h2>Pokémon List</h2>
 
-<table class="table">
-    <thead>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Actions</th>
+    </tr>
+    @foreach (var pokemon in Model)
+    {
         <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Height</th>
-            <th>Weight</th>
+            <td>@pokemon.Name</td>
+            <td>
+                <a asp-action="Details" asp-route-name="@pokemon.Name">View</a>
+            </td>
         </tr>
-    </thead>
-    <tbody>
-        @foreach (var pokemon in Model)
-        {
-            <tr>
-                <td><img src="@pokemon.ImageUrl" alt="@pokemon.Name" width="100" height="100" /></td>
-                <td>@pokemon.Name</td>
-                <td>@pokemon.Height</td>
-                <td>@pokemon.Weight</td>
-            </tr>
-        }
-    </tbody>
+    }
 </table>

@@ -17,10 +17,22 @@ namespace PokemonMVC.Controllers
             _pokemonService = new PokemonService();
         }
 
+        // List of Pokémon
         public async Task<IActionResult> Index()
         {
             var pokemonList = await _pokemonService.GetPokemonListAsync();
             return View(pokemonList);
+        }
+
+        // Pokémon Details Page
+        public async Task<IActionResult> Details(string name)
+        {
+            var pokemon = await _pokemonService.GetPokemonDetailsAsync(name);
+            if (pokemon == null)
+            {
+                return NotFound();
+            }
+            return View(pokemon);
         }
     }
 }
